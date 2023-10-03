@@ -7,7 +7,7 @@ def finestFoodOutlet(city, votes):
     best_votes = -1
 
     # Initialize pagination variables
-    page = 0
+    page = 1  # Start with page 1
     total_pages = float('inf')  # Initialize with positive infinity
 
     while page <= total_pages:
@@ -23,20 +23,19 @@ def finestFoodOutlet(city, votes):
 
         # Process each outlet on the current page
         for outlet in data["data"]:
-            # Check if the outlet has enough votes and a higher rating
-            if outlet["user_rating"]["votes"] >= votes and outlet["user_rating"]["average_rating"] > best_rating:
-                best_outlet = outlet["name"]
-                best_rating = outlet["user_rating"]["average_rating"]
-                best_votes = outlet["user_rating"]["votes"]
+            current_rating = outlet["user_rating"]["average_rating"]
+            current_votes = outlet["user_rating"]["votes"]
+
+            # Check if the outlet has enough votes
+            if current_votes >= votes:
+                # Check for a higher rating or tiebreaker condition
+                if current_rating > best_rating or (current_rating == best_rating and current_votes > best_votes):
+                    best_outlet = outlet["name"]
+                    best_rating = current_rating
+                    best_votes = current_votes
 
         # Move to the next page
         page += 1
 
     # Return the name of the finest food outlet
     return best_outlet
-
-# Example usage:
-city_name = "Miami"  # Replace with the desired city name
-min_votes = 1000  # Replace with the minimum vote count
-result = finestFoodOutlet(city_name, min_votes)
-print("Finest Food Outlet:", result)
